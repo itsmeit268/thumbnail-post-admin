@@ -29,6 +29,26 @@ class thumbnailPostAdmin
     }
 
     /**
+     * @return null
+     */
+    private function get_current_admin_post_type() {
+        global $post, $typenow, $current_screen;
+        return $post && $post->post_type ? $post->post_type : ($typenow ? $typenow : ($current_screen && $current_screen->post_type ? $current_screen->post_type : (isset($_REQUEST['post_type']) ? sanitize_key($_REQUEST['post_type']) : null)));
+    }
+
+
+    /**
+     * @return array
+     */
+    private function get_excluded_post_types()
+    {
+        if (empty($this->excluded_posttypes)) {
+            $this->excluded_posttypes = (array) apply_filters('thumbnail/exclude_posttype', $this->excluded_posttypes);
+        }
+        return $this->excluded_posttypes;
+    }
+    
+    /**
      * @param $columns
      * @return array|mixed
      */
@@ -36,7 +56,7 @@ class thumbnailPostAdmin
     {
         $new_columns = array();
         $new_columns['thumbnail'] = __('Thumbnail', 'text-domain');
-        if (!wp_is_mobile() && !in_array($this->getCurrentAdminPostType(), $this->getExcludedPostTypes())) {
+        if (!wp_is_mobile() && !in_array($this->get_current_admin_post_type(), $this->get_excluded_post_types())) {
             $columns = array_merge($new_columns, $columns);
         }
         return $columns;
@@ -49,28 +69,8 @@ class thumbnailPostAdmin
      */
     public function manage_posts_custom_column($column, $post_id)
     {
-        if ($column === 'thumbnail' && has_post_thumbnail( $post_id ) && !in_array($this->getCurrentAdminPostType(), $this->getExcludedPostTypes()))
+        if ($column === 'thumbnail' && has_post_thumbnail( $post_id ) && !in_array($this->get_current_admin_post_type(), $this->get_excluded_post_types()))
             echo get_the_post_thumbnail($post_id, array(120, 9999));
-    }
-
-    /**
-     * @return null
-     */
-    private function getCurrentAdminPostType() {
-        global $post, $typenow, $current_screen;
-        return $post && $post->post_type ? $post->post_type : ($typenow ? $typenow : ($current_screen && $current_screen->post_type ? $current_screen->post_type : (isset($_REQUEST['post_type']) ? sanitize_key($_REQUEST['post_type']) : null)));
-    }
-
-
-    /**
-     * @return array
-     */
-    private function getExcludedPostTypes()
-    {
-        if (empty($this->excluded_posttypes)) {
-            $this->excluded_posttypes = (array) apply_filters('thumbnail/exclude_posttype', $this->excluded_posttypes);
-        }
-        return $this->excluded_posttypes;
     }
 }
 

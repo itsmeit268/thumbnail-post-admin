@@ -47,7 +47,7 @@ class thumbnailPostAdmin
         }
         return $this->excluded_posttypes;
     }
-    
+
     /**
      * @param $columns
      * @return array|mixed
@@ -58,6 +58,8 @@ class thumbnailPostAdmin
         $new_columns['thumbnail'] = __('Thumbnail', 'text-domain');
         if (!wp_is_mobile() && !in_array($this->get_current_admin_post_type(), $this->get_excluded_post_types())) {
             $columns = array_merge($new_columns, $columns);
+        } else {
+            $columns['thumbnail'] = __('Thumbnail', 'text-domain');
         }
         return $columns;
     }

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Post Thumbnails Admin
-Plugin URI: https://itsmeit.co/
+Plugin URI: https://github.com/itsmeit268/thumbnail-post-admin
 Description: Show post image in Admin management page.
 Version: 1.0.0
 Author: itsmeit.co

@@ -12,8 +12,7 @@ Text Domain: thumbnail-post-admin
 Copyright 2023 itsmeit.co (email: buivanloi.2010@gmail.com)
 */
 
-class thumbnailPostAdmin
-{
+class thumbnailPostAdmin {
     /**
      * @var array
      */
@@ -22,10 +21,9 @@ class thumbnailPostAdmin
     /**
      * thumbnailPostAdmin constructor.
      */
-    public function __construct()
-    {
-        add_filter('manage_posts_columns', array($this, 'add_thumbnail_column'), 10, 1);
-        add_action('manage_posts_custom_column', array($this, 'manage_posts_custom_column'), 10, 2);
+    public function __construct(){
+        add_filter( 'manage_posts_columns', array( $this, 'add_thumbnail_column'), 10, 1 );
+        add_action( 'manage_posts_custom_column', array( $this, 'manage_posts_custom_column'), 10, 2 );
     }
 
     /**
@@ -40,8 +38,7 @@ class thumbnailPostAdmin
     /**
      * @return array
      */
-    private function get_excluded_post_types()
-    {
+    private function get_excluded_post_types(){
         if (empty($this->excluded_posttypes)) {
             $this->excluded_posttypes = (array) apply_filters('thumbnail/exclude_posttype', $this->excluded_posttypes);
         }
@@ -52,8 +49,7 @@ class thumbnailPostAdmin
      * @param $columns
      * @return array|mixed
      */
-    public function add_thumbnail_column($columns)
-    {
+    public function add_thumbnail_column($columns){
         $new_columns = array();
         $new_columns['thumbnail'] = __('Thumbnail', 'text-domain');
         if (!wp_is_mobile() && !in_array($this->get_current_admin_post_type(), $this->get_excluded_post_types())) {
@@ -65,14 +61,15 @@ class thumbnailPostAdmin
     }
 
 
-    /**
-     * @param $column
-     * @param $post_id
-     */
-    public function manage_posts_custom_column($column, $post_id)
-    {
-        if ($column === 'thumbnail' && has_post_thumbnail( $post_id ) && !in_array($this->get_current_admin_post_type(), $this->get_excluded_post_types()))
-            echo get_the_post_thumbnail($post_id, array(120, 9999));
+    public function manage_posts_custom_column($column, $post_id){
+        if ($column === 'thumbnail' && has_post_thumbnail($post_id) && !in_array($this->get_current_admin_post_type(), $this->get_excluded_post_types())) {
+            $thumbnail = get_the_post_thumbnail($post_id, array(120, 9999));
+
+            if (strpos($thumbnail, '.gif') !== false) {
+                $thumbnail = '<img width="120" height="60" src="' . get_the_post_thumbnail_url($post_id, 'thumbnail'). '" class="wp-post-image">';
+            }
+            echo $thumbnail;
+        }
     }
 }
 
